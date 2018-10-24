@@ -3,7 +3,7 @@ A simple, customisable table audit system for PostgreSQL implemented using trigg
 This is based off https://github.com/2ndQuadrant/audit-trigger with the following changes
 
 1. The row data is stored in `jsonb`.
-2. Logs session information from hasura's graphql-engine (accessible by `current_setting('hasura.session')`).
+2. Logs user information from hasura's graphql-engine (accessible by `current_setting('hasura.user')`).
 
 ## Installation
 

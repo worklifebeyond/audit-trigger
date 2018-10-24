@@ -46,7 +46,7 @@ CREATE TABLE audit.logged_actions (
     relid oid not null,
 
     session_user_name text,
-    hasura_session jsonb,
+    hasura_user jsonb,
 
     action_tstamp_tx TIMESTAMP WITH TIME ZONE NOT NULL,
     action_tstamp_stm TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -106,7 +106,7 @@ BEGIN
         TG_TABLE_NAME::text,                          -- table_name
         TG_RELID,                                     -- relation OID for much quicker searches
         session_user::text,                           -- session_user_name
-        current_setting('hasura.session', 't')::jsonb,-- session information from hasura
+        current_setting('hasura.user', 't')::jsonb,   -- user information from hasura graphql engine
         current_timestamp,                            -- action_tstamp_tx
         statement_timestamp(),                        -- action_tstamp_stm
         clock_timestamp(),                            -- action_tstamp_clk
