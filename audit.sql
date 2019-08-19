@@ -131,18 +131,18 @@ BEGIN
     IF (TG_OP = 'UPDATE' AND TG_LEVEL = 'ROW') THEN
         old_r = to_jsonb(OLD);
         new_r = to_jsonb(NEW);
-        audit_row.row_data = old_r - excluded_cols;
+        audit_row.row_data = old_r #- excluded_cols;
         SELECT
-          jsonb_object_agg(new_t.key, new_t.value) - excluded_cols
+          jsonb_object_agg(new_t.key, new_t.value) #- excluded_cols
         INTO
           audit_row.changed_fields
         FROM jsonb_each(old_r) as old_t
         JOIN jsonb_each(new_r) as new_t
           ON (old_t.key = new_t.key AND old_t.value <> new_t.value);
     ELSIF (TG_OP = 'DELETE' AND TG_LEVEL = 'ROW') THEN
-        audit_row.row_data = to_jsonb(OLD) - excluded_cols;
+        audit_row.row_data = to_jsonb(OLD) #- excluded_cols;
     ELSIF (TG_OP = 'INSERT' AND TG_LEVEL = 'ROW') THEN
-        audit_row.row_data = to_jsonb(NEW) - excluded_cols;
+        audit_row.row_data = to_jsonb(NEW) #- excluded_cols;
     ELSIF (TG_LEVEL = 'STATEMENT' AND TG_OP IN ('INSERT','UPDATE','DELETE','TRUNCATE')) THEN
         audit_row.statement_only = 't';
     ELSE
