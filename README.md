@@ -63,3 +63,38 @@ Log changes for every row, log the sql statement, but don't log the data of the 
 ```sql
 select audit.audit_table('author', true, true, '{email,phone_number}');
 ```
+
+### Log Event
+
+Every log fired a notification via `Notify`. You can subscribe to `new_log` event for custom bussiness logic.
+
+* Example using `nodejs` and [pg-notify](https://github.com/andywer/pg-listen):
+
+```javascript
+import createSubscriber from "pg-listen"
+import { databaseURL } from "./config"
+
+// Accepts the same connection config object that the "pg" package would take
+const subscriber = createSubscriber({ connectionString: databaseURL })
+
+subscriber.notifications.on("new_log", (payload) => {
+  console.log("Received notification in 'new_log':", payload)
+})
+
+subscriber.events.on("error", (error) => {
+  console.error("Fatal database connection error:", error)
+  process.exit(1)
+})
+
+process.on("exit", () => {
+  subscriber.close()
+})
+
+(async function connect () {
+  await subscriber.connect()
+  await subscriber.listenTo("new_log")
+})()
+
+```
+
+
