@@ -150,6 +150,7 @@ BEGIN
         RETURN NULL;
     END IF;
     INSERT INTO audit.logged_actions VALUES (audit_row.*);
+    PERFORM pg_notify('new_log', row_to_json(audit_row.*)::text);
     RETURN NULL;
 END;
 $body$
